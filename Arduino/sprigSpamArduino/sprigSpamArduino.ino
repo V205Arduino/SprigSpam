@@ -82,8 +82,8 @@ void setup() {
   gfx->setCursor(10, 10);
   gfx->setTextColor(GREEN);
 
-  gfx->println("Press S to start");
-  gfx->println("Press S to start");
+  gfx->print("Press S to start");
+  gfx->print(".");
   unsigned long previousTime = 0;
   const long interval = 1000;
   int dotCounter = 0;
@@ -93,13 +93,14 @@ void setup() {
     if (currentTime - previousTime >= interval) {
 
       previousTime = currentTime;
-
-      if (1) {
+      
+      gfx->print(".");
+      if (dotCounter = 3) {
 
       } else {
       }
     }
-    gfx->fillScreen(BLACK);
+    //gfx->fillScreen(BLACK);
   }
 }
 
