@@ -84,7 +84,7 @@ void setup() {
 
   gfx->println("Press S to start");
   gfx->println("Press S to start");
-  const unsigned long previousTime = 0;
+  unsigned long previousTime = 0;
   const long interval = 1000;
   int dotCounter = 0;
   while (digitalRead(sButtonPin) == LOW) {
