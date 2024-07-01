@@ -91,8 +91,8 @@ void setup() {
 
     unsigned long currentTime = millis();
     if (currentTime - previousTime >= interval) {
-      // save the last time you blinked the LED
-      previousMillis = currentMillis;
+
+      previousTime = currentTime;
 
       if (1) {
 
