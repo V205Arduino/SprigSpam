@@ -83,25 +83,31 @@ void setup() {
   gfx->setTextColor(GREEN);
 
   gfx->print("Press S to start");
-  gfx->print(".");
+  Serial.print("hello serial");
   unsigned long previousTime = 0;
   const long interval = 1000;
   int dotCounter = 0;
-  while (digitalRead(sButtonPin) == LOW) {
+  while (digitalRead(sButtonPin) == HIGH) {
 
     unsigned long currentTime = millis();
     if (currentTime - previousTime >= interval) {
 
       previousTime = currentTime;
-      
-      gfx->print(".");
-      if (dotCounter = 3) {
 
+      
+      if (dotCounter == 3) {
+        dotCounter = 0;
+        gfx->fillScreen(BLACK);
+        gfx->setCursor(10, 10);
+        gfx->print("Press S to start");
       } else {
+        dotCounter++;
+        gfx->print(".");
       }
     }
     //gfx->fillScreen(BLACK);
   }
+  gfx->fillScreen(BLACK);
 }
 
 void loop() {
