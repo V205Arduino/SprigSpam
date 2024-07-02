@@ -21,25 +21,29 @@ void setup()
   Serial.println(F("STARTING " __FILE__ " from " __DATE__ __TIME__));
   BTstack.setup();
 
-  BTstack.setAdvData(sizeof(adv_data), adv_data);
-  BTstack.startAdvertising();
+  //BTstack.setAdvData(sizeof(adv_data), adv_data);
+  //BTstack.startAdvertising();
 
 }
 
 void loop() 
 {
+  BTstack.stopAdvertising()
+  delay(1000);
+  BTstack.setAdvData(sizeof(adv_data2), adv_data2);
+  BTstack.startAdvertising();
+  // put your main code here, to run repeatedly:
+  BTstack.loop();
+  delay(1000);
 
+  BTstack.stopAdvertising()
+  delay(1000);
   BTstack.setAdvData(sizeof(adv_data), adv_data);
   BTstack.startAdvertising();
   // put your main code here, to run repeatedly:
    BTstack.loop();
-  delay(1000);
-   BTstack.setAdvData(sizeof(adv_data2), adv_data)2;
-  BTstack.startAdvertising();
-  // put your main code here, to run repeatedly:
-   BTstack.loop();
    delay(1000);
-   
+  
 
 }
 
