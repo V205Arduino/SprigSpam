@@ -172,7 +172,71 @@ void setup() {
   BTstack.startAdvertising();
 }
 
+bool lastWButtonState = false;
+bool wButtonState = false;
+bool lastSButtonState = false;
+bool sButtonState = false;
 
+int option = 1;
 void loop() {
+
   BTstack.loop();
+  static unsigned long timer = 0;
+  unsigned long interval = 50;
+
+
+  Serial.println("loop");
+  if (millis() - timer >= interval) {
+    timer = millis();
+    // read the pushbutton input pin:
+    wButtonState = digitalRead(wButtonPin);
+    sButtonState = digitalRead(sButtonPin);
+    if(sButtonState != lastSButtonState){
+      if ((sButtonState == false)&&(option >1)){
+        option--;
+
+
+        BTstack.stopAdvertising();
+        Serial.println("s button");
+        Serial.println(option-1);
+        Serial.println(payloadNames[option-1]);
+        BTstack.setAdvData(sizeof(payloads[option-1]), payloads[option-1]);
+        BTstack.startAdvertising();
+      }
+    }
+    lastSButtonState = sButtonState;
+    // compare the wButtonState to its previous state
+    if (wButtonState != lastWButtonState) {
+      if ((wButtonState == false) && (option < 23)) {
+        option++;
+
+
+        BTstack.stopAdvertising();
+        Serial.println(option-1);
+        Serial.println(payloadNames[option-1]);
+        BTstack.setAdvData(sizeof(payloads[option-1]), payloads[option-1]);
+
+        BTstack.startAdvertising();
+        /*
+        Serial.println("W pressed, rerolling");
+        int randomBLE = random(0, 24);
+
+        gfx->fillScreen(BLACK);
+        gfx->setCursor(0, 0);
+        gfx->println("Running, transmiting BLE data.. ");
+        gfx->println("Device: ");
+        gfx->println(payloadNames[randomBLE]);
+
+        BTstack.stopAdvertising();
+        Serial.println(randomBLE);
+        Serial.println(payloadNames[randomBLE]);
+        BTstack.setAdvData(sizeof(payloads[randomBLE]), payloads[randomBLE]);
+
+        BTstack.startAdvertising();
+        */
+      }
+    }
+  }
+  lastWButtonState = wButtonState;
+  
 }
