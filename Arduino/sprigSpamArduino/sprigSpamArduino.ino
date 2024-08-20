@@ -165,7 +165,7 @@ void setup() {
   tft.setCursor(10, 10);
   tft.fillScreen(ST77XX_BLACK);
 
-  tft.println("SprigSpam V0.1 \nW:Select\nA:N/A\nS:Select\nD: Start/Stop");
+  tft.println("SprigSpam V0.1 \nW:Select\nA:N/A\nS:Select\nD:Start/Stop");
   //BTstack.setAdvData(sizeof(adv_data2), adv_data2);
   /*
   int randomBLE = random(0, 24);
@@ -210,7 +210,16 @@ void loop() {
         Serial.println(option - 1);
         Serial.println(payloadNames[option - 1]);
         BTstack.setAdvData(sizeof(payloads[option - 1]), payloads[option - 1]);
-        BTstack.startAdvertising();
+        tft.fillScreen(ST7735_BLACK);
+        tft.setCursor(0, 0);
+        if (spamming) {
+          tft.println("SprigSpam Running");
+          BTstack.startAdvertising();
+        } else {
+          tft.println("SprigSpam Paused");
+          BTstack.stopAdvertising();
+        }
+        tft.println(payloadNames[option - 1]);
       }
     }
     if (dButtonState != lastDButtonState) {
@@ -218,13 +227,14 @@ void loop() {
         spamming = !spamming;
         tft.fillScreen(ST77XX_BLACK);
         tft.setCursor(0, 0);
-        if(spamming){
+        if (spamming) {
           tft.println("SprigSpam Running");
-
-        }else{
+          BTstack.startAdvertising();
+        } else {
           tft.println("SprigSpam Paused");
           BTstack.stopAdvertising();
         }
+        tft.println(payloadNames[option - 1]);
       }
     }
     if (sButtonState != lastSButtonState) {
@@ -236,10 +246,21 @@ void loop() {
         Serial.println(payloadNames[option - 1]);
 
         BTstack.setAdvData(sizeof(payloads[option - 1]), payloads[option - 1]);
-
-        BTstack.startAdvertising();
+        tft.setCursor(0, 0);
+        tft.fillScreen(ST7735_BLACK);
+        if (spamming) {
+          tft.println("SprigSpam Running");
+          BTstack.startAdvertising();
+        } else {
+          tft.println("SprigSpam Paused");
+          BTstack.stopAdvertising();
+        }
+        tft.println(payloadNames[option - 1]);
       }
     }
+
+    Serial.print(payloadNames[option - 1]);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
   }
   lastWButtonState = wButtonState;
   lastDButtonState = dButtonState;
