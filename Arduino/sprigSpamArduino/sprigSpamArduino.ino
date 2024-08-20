@@ -4,9 +4,9 @@
 */
 
 #include <BTstackLib.h>
-#include <Arduino_GFX_Library.h>
-
-
+#include <Adafruit_GFX.h>     // Core graphics library
+#include <Adafruit_ST7735.h>  // Hardware-specific library for ST7735
+#include <SPI.h>
 
 
 
@@ -25,19 +25,18 @@ Arduino_HWSPI(int8_t dc, int8_t cs = GFX_NOT_DEFINED, SPIClass *spi = &SPI, bool
 TODO: get
 */
 
-//Arduino_DataBus *bus = new Arduino_HWSPI(16 /* DC */, 5 /* CS */);
+#define TFT_CS 21
+#define TFT_RST 26  // Or set to -1 and connect to Arduino RESET pin
+#define TFT_DC 22
 
-Arduino_DataBus *bus = new Arduino_HWSPI(22, 21);
-//Arduino_GFX *gfx = new Arduino_ILI9341(bus, 17 /* RST */);
-Arduino_GFX *gfx = new Arduino_ST7735(bus, 26, 3);
 
-/*
 
-Arduino_ST7735::Arduino_ST7735(
-    Arduino_DataBus *bus, int8_t rst, uint8_t r,
-    bool ips, int16_t w, int16_t h,
-    uint8_t col_offset1, uint8_t row_offset1, uint8_t col_offset2, uint8_t row_offset2,
-*/
+#define WIDTH 160
+#define HEIGHT 128
+
+
+Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
+
 
 
 const char *payloadNames[] = {
@@ -82,15 +81,7 @@ const uint8_t payloads[][31] = {
   { 0x16, 0xff, 0x4c, 0x00, 0x04, 0x04, 0x2a, 0x00, 0x00, 0x00, 0x0f, 0x05, 0xc1, 0x1e, 0x60, 0x4c, 0x95, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00 },
 };
 
-/*
-const uint8_t adv_data[] = {
-  0x1e, 0xff, 0x4c, 0x00, 0x07, 0x19, 0x07, 0x02, 0x20, 0x75, 0xaa, 0x30, 0x01, 0x00, 0x00, 0x45, 0x12, 0x12, 0x12, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-};
-const uint8_t adv_data2[] = {
-  0x1e, 0xff, 0x4c, 0x00, 0x07, 0x19, 0x07, 0x13, 0x20, 0x75, 0xaa, 0x30, 0x01, 0x00, 0x00, 0x45, 0x12, 0x12, 0x12, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-};
 
-*/
 // Define pin numbers for the buttons
 const int wButtonPin = 5;
 const int aButtonPin = 6;
@@ -100,6 +91,9 @@ const int iButtonPin = 12;
 const int jButtonPin = 13;
 const int kButtonPin = 14;
 const int lButtonPin = 15;
+
+int option = 0;
+bool spamming = false;
 
 void setup() {
   // put your setup code here, to run once:
@@ -123,12 +117,25 @@ void setup() {
   pinMode(17, OUTPUT);
   digitalWrite(17, HIGH);
   delay(1000);
-  gfx->begin();
-  gfx->fillScreen(BLACK);
-  gfx->setCursor(10, 10);
-  gfx->setTextColor(GREEN);
+  tft.initR(INITR_BLACKTAB);  // Init ST7735S chip, black tab
+  tft.setRotation(3);
+  //rocket fast sprig, anyone?
 
-  gfx->print("Press S to start");
+  // SPI speed defaults to SPI_DEFAULT_FREQ defined in the library, you can override it here
+  // Note that speed allowable depends on chip and quality of wiring, if you go too fast, you
+  // may end up with a black screen some times, or all the time.
+  //15MHz seems to be max SPI speed of ST7735
+  //maximum SPI data rate of RP2040 is around 62.5 Mbps (62.5 MHz).
+
+  //Risky? idk lets hope
+  //tft.setSPISpeed(50000000);
+
+  tft.fillScreen(ST77XX_BLACK);
+  tft.setCursor(0, 0);
+  tft.setTextColor(ST77XX_GREEN);
+
+  /*
+  tft.print("Press S to start");
   Serial.print("hello serial");
   unsigned long previousTime = 0;
   const long interval = 1000;
@@ -139,45 +146,48 @@ void setup() {
       previousTime = currentTime;
       if (dotCounter == 3) {
         dotCounter = 0;
-        gfx->fillScreen(BLACK);
-        gfx->setCursor(10, 10);
-        gfx->setTextColor(BLUE);
+        tft.fillScreen(ST77XX_BLACK);
+        tft.setCursor(10, 10);
+        tft.setTextColor(ST77XX_BLUE);
         //gfx->print("...");
-        gfx->setTextColor(GREEN);
-        gfx->print("Press S to start");
+        tft.setTextColor(ST77XX_GREEN);
+        tft.print("Press S to start");
 
       } else {
         dotCounter++;
-        gfx->print(".");
+        tft.print(".");
       }
     }
     //gfx->fillScreen(BLACK);
   }
-  gfx->setCursor(10, 10);
-  gfx->setTextColor(BLUE);
-  //gfx->print("...");
-  gfx->setTextColor(GREEN);
+  */
 
-  gfx->fillScreen(BLACK);
-  gfx->println("Running, transmiting BLE data.. ");
+  tft.setCursor(10, 10);
+  tft.fillScreen(ST77XX_BLACK);
+
+  tft.println("SprigSpam V0.1 \nW:Select\nA:N/A\nS:Select\nD: Start/Stop");
   //BTstack.setAdvData(sizeof(adv_data2), adv_data2);
+  /*
   int randomBLE = random(0, 24);
-  gfx->print("Device: ");
-  gfx->println(payloadNames[randomBLE]);
+  tft.print("Device: ");
+  tft.println(payloadNames[randomBLE]);
 
   Serial.println(randomBLE);
   Serial.println(payloadNames[randomBLE]);
   BTstack.setAdvData(sizeof(payloads[randomBLE]), payloads[randomBLE]);
 
   BTstack.startAdvertising();
+  */
 }
 
 bool lastWButtonState = false;
 bool wButtonState = false;
 bool lastSButtonState = false;
 bool sButtonState = false;
+bool lastDButtonState = false;
+bool dButtonState = false;
 
-int option = 1;
+
 void loop() {
   BTstack.loop();
   static unsigned long timer = 0;
@@ -187,33 +197,51 @@ void loop() {
   Serial.println("looping, I guess");
   if (millis() - timer >= interval) {
     timer = millis();
-    // read the pushbutton input pin:
+    // read the pushbutton input pins:
     wButtonState = digitalRead(wButtonPin);
     sButtonState = digitalRead(sButtonPin);
-    if(sButtonState != lastSButtonState){
-      if ((sButtonState == false)&&(option >1)){
-        option--;
-        BTstack.stopAdvertising();
-        Serial.println("s button");
-        Serial.println(option-1);
-        Serial.println(payloadNames[option-1]);
-        BTstack.setAdvData(sizeof(payloads[option-1]), payloads[option-1]);
-        BTstack.startAdvertising();
-      }
-    }
-    
+    dButtonState = digitalRead(dButtonPin);
+
     // compare the wButtonState to its previous state
     if (wButtonState != lastWButtonState) {
       if ((wButtonState == false) && (option < 23)) {
         option++;
         BTstack.stopAdvertising();
-        Serial.println(option-1);
-        Serial.println(payloadNames[option-1]);
-        BTstack.setAdvData(sizeof(payloads[option-1]), payloads[option-1]);
+        Serial.println(option - 1);
+        Serial.println(payloadNames[option - 1]);
+        BTstack.setAdvData(sizeof(payloads[option - 1]), payloads[option - 1]);
+        BTstack.startAdvertising();
+      }
+    }
+    if (dButtonState != lastDButtonState) {
+      if ((dButtonState == false)) {
+        spamming = !spamming;
+        tft.fillScreen(ST77XX_BLACK);
+        tft.setCursor(0, 0);
+        if(spamming){
+          tft.println("SprigSpam Running");
+
+        }else{
+          tft.println("SprigSpam Paused");
+          BTstack.stopAdvertising();
+        }
+      }
+    }
+    if (sButtonState != lastSButtonState) {
+      if ((sButtonState == false) && (option > 1)) {
+        option--;
+        BTstack.stopAdvertising();
+        Serial.println("s button");
+        Serial.println(option - 1);
+        Serial.println(payloadNames[option - 1]);
+
+        BTstack.setAdvData(sizeof(payloads[option - 1]), payloads[option - 1]);
+
         BTstack.startAdvertising();
       }
     }
   }
   lastWButtonState = wButtonState;
+  lastDButtonState = dButtonState;
   lastSButtonState = sButtonState;
 }
