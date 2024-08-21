@@ -1,5 +1,9 @@
 /*
   sprigSpamArduino.ino
+  Very, very nightmarish code.
+  Please continue at your own risk.
+  Sanity warrenty not included.
+  
   By V205
 */
 
