@@ -1,6 +1,7 @@
 # SprigSpam
 A kind of port of AppleJuice, to Sprig.
-This program can 
+This program can do... this:
+![bluetooth tools menu](assets/AirPodsiPad.png "Title")
 A Arduino program for [Hack Club's Sprig game console](https://github.com/hackclub/sprig).
 
 Thank you to [AppleJuice](https://github.com/ECTO-1A/AppleJuice), this project takes from AppleJuice's information.
