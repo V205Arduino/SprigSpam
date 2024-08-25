@@ -1,7 +1,7 @@
 # SprigSpam
 A kind of port of AppleJuice, to Sprig.
 This program can do... this:
-![bluetooth tools menu](https://github.com/V205Arduino/SprigSpam/blob/main/assets/AirPodsiPad.png "Title")
+![bluetooth tools menu](https://github.com/V205Arduino/SprigSpam/blob/main/assets/AirPodsiPad.png "Title")\
 A Arduino program for [Hack Club's Sprig game console](https://github.com/hackclub/sprig).
 
 Thank you to [AppleJuice](https://github.com/ECTO-1A/AppleJuice), this project takes from AppleJuice's information.
@@ -17,7 +17,7 @@ Controls:\
 W: Select Up\
 A: N/A\
 S: Select Down\
-D: Start/Stop\
+D: Start/Stop
 
 
 Build it yourself:\
@@ -26,7 +26,8 @@ Select an option with bluetooth.\
 ![bluetooth tools menu](assets/Screenshot%202024-08-20%20at%202.28.22 PM.png "Title")
 
 Notes and random things:\
-D button for start stop, give credit to KittyCat and HenHen.\
+D button for start stop, give credit to KittyCat and HenHen.
+Thanks to kieran for very much help with arcade!
 
 Todo:\
 Button classes\
