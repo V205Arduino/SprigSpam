@@ -4,6 +4,7 @@ This program can do... this:
 ![bluetooth tools menu](https://github.com/V205Arduino/SprigSpam/raw/main/assets/AirPodsiPad.png "Title")\
 A Arduino program for [Hack Club's Sprig game console](https://github.com/hackclub/sprig).
 
+![bluetooth tools menu](https://github.com/V205Arduino/SprigSpam/raw/main/assets/Screenshot%202024-08-23%20at%202.31.10%E2%80%AFPM.png "Title")\
 Thank you to [AppleJuice](https://github.com/ECTO-1A/AppleJuice), this project takes from AppleJuice's information.
 
 You'll need a Pico W(or WH, not H), because this program uses the BLE functions.
